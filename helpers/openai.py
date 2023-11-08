@@ -112,6 +112,8 @@ def clean_answer(question, context):
     return completion.choices[0].text
 
 def follow_up(question, history):
+    if len(history) < 2:
+        return question
     prefix = "Using the following question and answer set as context:\n"
     for h in history:
         prefix+="Question: {}\n".format(h.question)
