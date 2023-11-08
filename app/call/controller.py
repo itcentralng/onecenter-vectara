@@ -6,7 +6,7 @@ from app.call.model import *
 from app.call.schema import *
 from app.user.model import User
 from helpers.langchain import qa_chain
-from helpers.openai import qa
+from helpers.openai import clean_answer, follow_up
 from helpers.vectara.query import query
 
 bp = Blueprint('call', __name__, template_folder='templates')
@@ -73,12 +73,13 @@ def respond_to_call_in_progress():
             if confidence >= 0.7:
                 # Store Call Before Responding
                 history = Call.get_by_user_id_and_session_id(user.id, session_id)
-                answer = qa_chain(alternative.get('transcript'), history, partner)
-                # res, success = query(partner.corpus_id, alternative.get('transcript'))
-                # if success and (not 'returned results did not contain sufficient information to be summarized into a useful answer for your query' in res.json().get('responseSet')[0].get('summary')[0].get('text')):
-                #     answer = qa(alternative.get('transcript'), res.json().get('responseSet')[0].get('summary')[0].get('text'))
-                # else:
-                #     answer = "Sorry, I don't have answer for that at the moment."
+                question = follow_up(question, history)
+                # answer = qa_chain(alternative.get('transcript'), history, partner)
+                res, success = query(partner.corpus_id, question)
+                if success and (not 'returned results did not contain sufficient information to be summarized into a useful answer for your query' in res.json().get('responseSet')[0].get('summary')[0].get('text')):
+                    answer = clean_answer(question, res.json().get('responseSet')[0].get('summary')[0].get('text'))
+                else:
+                    answer = "Sorry, I don't have answer for that at the moment."
                 Call.create(user.id, partner.id, session_id, alternative.get('transcript'), answer)
                 break
         if 'take care' in answer.lower() or 'bye' in answer.lower():
@@ -113,12 +114,13 @@ def respond_to_call_in_progress():
         partner = Partner.get_by_id(partner_id)
         user = User.get_by_id(user_id)
         history = Call.get_by_user_id_and_session_id(user.id, session_id)
-        answer = qa_chain(question, history, partner)
-        # res, success = query(partner.corpus_id, question)
-        # if success and (not 'returned results did not contain sufficient information to be summarized into a useful answer for your query' in res.json().get('responseSet')[0].get('summary')[0].get('text')):
-        #     answer = qa(question, res.json().get('responseSet')[0].get('summary')[0].get('text'))
-        # else:
-        #     answer = "Sorry, I don't have answer for that at the moment."
+        # answer = qa_chain(question, history, partner)
+        _question = follow_up(question, history)
+        res, success = query(partner.corpus_id, _question)
+        if success and (not 'returned results did not contain sufficient information to be summarized into a useful answer for your query' in res.json().get('responseSet')[0].get('summary')[0].get('text')):
+            answer = clean_answer(_question, res.json().get('responseSet')[0].get('summary')[0].get('text'))
+        else:
+            answer = "Sorry, I don't have answer for that at the moment."
         Call.create(user.id, partner.id, session_id, question, answer)
         return answer
 

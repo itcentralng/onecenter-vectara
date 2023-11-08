@@ -103,10 +103,22 @@ def rewrite(text):
     return completion.choices[0].message
 
 
-def qa(question, context):
+def clean_answer(question, context):
     completion = openai.Completion.create(
         model="gpt-3.5-turbo-instruct",
-        prompt="In one sentence, answer this following question using the following context: Question: {} Context: {}".format(question, context),
+        prompt="In one sentence, answer this following question using the following context: Question: {} Context: {}. If the given context does not contain answer to the question, respond with an apology for not being able to answer the question at the moment".format(question, context),
+        max_tokens=200,
+        )
+    return completion.choices[0].text
+
+def follow_up(question, history):
+    prefix = "Using the following question and answer set as context:\n"
+    for h in history:
+        prefix+="Question: {}\n".format(h.question)
+        prefix+="Answer: {}\n".format(h.answer)
+    completion = openai.Completion.create(
+        model="gpt-3.5-turbo-instruct",
+        prompt=prefix+"Rewrite this question: '{}' such that it can be asked independent of the previous questions".format(question),
         max_tokens=200,
         )
     return completion.choices[0].text
