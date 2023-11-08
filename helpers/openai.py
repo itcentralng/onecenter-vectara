@@ -104,6 +104,10 @@ def rewrite(text):
 
 
 def clean_answer(question, context):
+    if "bye" in question and "thank you" in question:
+        return "You are welcome, goodbye!"
+    elif "bye" in question:
+        return "If you have any question in the future, dont hesitate to call, goodbye!"
     completion = openai.Completion.create(
         model="gpt-3.5-turbo-instruct",
         prompt="In one sentence, answer this following question using the following context: Question: {} Context: {}. If the given context does not contain answer to the question, respond with 'Sorry, I don't have answer for that at the moment'".format(question, context),
