@@ -73,7 +73,7 @@ def respond_to_call_in_progress():
             if confidence >= 0.7:
                 # Store Call Before Responding
                 history = Call.get_by_user_id_and_session_id(user.id, session_id)
-                question = follow_up(question, history)
+                question = follow_up(alternative.get('transcript'), history)
                 # answer = qa_chain(alternative.get('transcript'), history, partner)
                 res, success = query(partner.corpus_id, question)
                 if success and (not 'returned results did not contain sufficient information to be summarized into a useful answer for your query' in res.json().get('responseSet')[0].get('summary')[0].get('text')):
