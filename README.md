@@ -9,7 +9,7 @@
 ``CONTENT OF .env.example to .env``
 
 ## CHANGE ONLY THE FOLLOWIG FIELDS WITH YOURS:
-``DATABASE_URI``
+``DATABASE_URI=changing this is optional``
 
 ``OPENAI_API_KEY``
 
@@ -20,8 +20,6 @@
 ``VECTARA_APP_SECRET``
 
 ``VECTARA_API_KEY``
-
-``VECTARA_BASE``
 
 ``VECTARA_AUTH_URL``
 
