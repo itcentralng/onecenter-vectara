@@ -41,4 +41,4 @@ from app.platform.controller import bp as platform_bp
 app.register_blueprint(platform_bp)
 
 # Error handlers
-# from .error_handlers import *
+from .error_handlers import *
