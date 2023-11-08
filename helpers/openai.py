@@ -106,7 +106,7 @@ def rewrite(text):
 def clean_answer(question, context):
     completion = openai.Completion.create(
         model="gpt-3.5-turbo-instruct",
-        prompt="In one sentence, answer this following question using the following context: Question: {} Context: {}. If the given context does not contain answer to the question, respond with 'Sorry, I don't have answer for that at the moment'. If the questions indicate that the user wants to end the call respond with a goodbye response".format(question, context),
+        prompt="In one sentence, answer this following question using the following context: Question: {} Context: {}. If the given context does not contain answer to the question, respond with 'Sorry, I don't have answer for that at the moment'".format(question, context),
         max_tokens=200,
         )
     return completion.choices[0].text.lstrip(".\n\n")
