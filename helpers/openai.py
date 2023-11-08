@@ -106,7 +106,7 @@ def rewrite(text):
 def clean_answer(question, context):
     if "bye" in question and "thank you" in question:
         return "You are welcome, goodbye!"
-    elif "bye" in question:
+    elif "bye" in question or "take care" in question:
         return "If you have any question in the future, dont hesitate to call, goodbye!"
     completion = openai.Completion.create(
         model="gpt-3.5-turbo-instruct",
